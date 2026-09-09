@@ -1,37 +1,36 @@
 import Link from 'next/link';
+import { newsData } from '@/data/news';
+import { constructMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = constructMetadata({
   title: 'News & Press',
   description: 'Latest news, press releases, and articles about Hult Prize at Green University.',
-};
+});
 
 export default function NewsPage() {
-  // Placeholder data for the initial static setup
-  const articles = [
-    {
-      id: '1',
-      title: 'Hult Prize at GUB Secures Title Sponsor for 2026',
-      slug: 'gub-secures-title-sponsor-2026',
-      excerpt: 'In a landmark partnership, Hult Prize at Green University announces its primary backer for the upcoming pitch cycle.',
-      publishedAt: '2026-09-10',
-    }
-  ];
-
   return (
-    <div className="max-w-5xl mx-auto px-6 py-20">
-      <h1 className="text-4xl font-bold text-gray-900 mb-12">News & Press</h1>
-      
+    <div className="mx-auto max-w-5xl px-6 py-20">
+      <h1 className="mb-12 text-4xl font-bold text-slate-900 dark:text-white">News &amp; Press</h1>
+
       <div className="space-y-8">
-        {articles.map((article) => (
-          <article key={article.id} className="border-b border-gray-100 pb-8 last:border-0">
-            <span className="text-xs text-gray-500 font-medium mb-2 block">{article.publishedAt}</span>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              <Link href={`/media/news/${article.slug}`} className="hover:text-[#E6007F] transition">
+        {newsData.map((article) => (
+          <article key={article.id} className="border-b border-slate-100 pb-8 last:border-0 dark:border-white/10">
+            <span className="mb-2 block text-xs font-medium text-slate-500 dark:text-slate-400">
+              <time dateTime={article.publishedAt}>
+                {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+            </span>
+            <h2 className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">
+              <Link href={`/media/news/${article.slug}`} className="transition hover:text-brand-pink">
                 {article.title}
               </Link>
             </h2>
-            <p className="text-gray-600 mb-4">{article.excerpt}</p>
-            <Link href={`/media/news/${article.slug}`} className="text-[#E6007F] font-semibold text-sm hover:underline">
+            <p className="mb-4 text-slate-600 dark:text-slate-300">{article.excerpt}</p>
+            <Link href={`/media/news/${article.slug}`} className="text-sm font-semibold text-brand-pink hover:underline">
               Read Article &rarr;
             </Link>
           </article>

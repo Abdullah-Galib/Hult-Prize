@@ -2,20 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 17, 24, 39;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
-}
+@layer components {
+  /* Shared pink pill CTA. Set padding/size at the call site. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-pink font-bold text-white transition-all hover:bg-brand-magenta;
+  }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  /* Shared neutral pill CTA. */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white font-bold text-slate-900 transition-colors hover:bg-slate-200 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200;
+  }
 
-/* Custom base styles for prose/richtext if needed later */
-.prose p {
-  margin-bottom: 1.25em;
+  /* Glass card used across sections. */
+  .card-glass {
+    @apply rounded-3xl border border-slate-200 bg-white shadow-lg dark:border-white/10 dark:bg-white/5;
+  }
+
+  /* Shared form field styling (light + dark aware). */
+  .input-field {
+    @apply w-full rounded-xl border border-slate-300 bg-white/70 p-3.5 text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-transparent focus:ring-2 focus:ring-brand-pink dark:border-white/10 dark:bg-black/30 dark:text-white dark:placeholder:text-slate-500;
+  }
+
+  .input-label {
+    @apply mb-2 block text-sm font-medium text-slate-800 dark:text-slate-200;
+  }
 }

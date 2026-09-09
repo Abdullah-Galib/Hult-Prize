@@ -1,47 +1,39 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { siteConfig } from '@/config/site';
 
-interface GithubUser {
-  name: string;
-  avatar_url: string;
-  html_url: string;
-  login: string;
-}
-
+// Server component: static data from config/site.ts — no runtime GitHub API
+// call (the unauthenticated API rate-limits at 60 req/hour per visitor IP and
+// made the credit vanish unpredictably).
 export default function DeveloperCredit() {
-  const [profile, setProfile] = useState<GithubUser | null>(null);
-
-  useEffect(() => {
-    // Fetches Abdullah Md Galib's data
-    fetch('https://api.github.com/users/Abdullah-Galib')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.login) setProfile(data);
-      })
-      .catch((err) => console.error('GitHub fetch failed:', err));
-  }, []);
-
-  if (!profile) return null;
+  const developer = siteConfig.developer;
 
   return (
-    <div className="border-t border-white/5 bg-[#050810] py-6">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="border-t border-white/5 bg-navy-deep py-6">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
         <p className="text-xs text-slate-600">
-          © {new Date().getFullYear()} Hult Prize at Green University of Bangladesh. All rights reserved.
+          © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
         </p>
-        
-        <div className="flex items-center gap-4 bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:bg-white/10 transition-colors">
-          <a href={profile.html_url} target="_blank" rel="noopener noreferrer" className="relative w-8 h-8 rounded-full overflow-hidden border border-[#E6007F]">
-            <Image src={profile.avatar_url} alt={profile.name || profile.login} fill sizes="32px" className="object-cover" />
+
+        <div className="flex items-center gap-4 rounded-full border border-white/10 bg-white/5 px-4 py-2 transition-colors hover:bg-white/10">
+          <a
+            href={developer.profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative h-8 w-8 overflow-hidden rounded-full border border-brand-pink"
+          >
+            <Image src={developer.avatarUrl} alt={developer.name} fill sizes="32px" className="object-cover" />
           </a>
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Developed By</span>
-            <a href={profile.html_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-white hover:text-[#E6007F] transition-colors">
-              {profile.name || profile.login}
+            <span className="text-[10px] uppercase tracking-wider text-slate-400">Developed By</span>
+            <a
+              href={developer.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-bold text-white transition-colors hover:text-brand-pink"
+            >
+              {developer.name}
             </a>
-            <span className="text-[10px] text-[#FFDA00]">GUB Sponsorship Management Team</span>
+            <span className="text-[10px] text-brand-yellow">{developer.title}</span>
           </div>
         </div>
       </div>

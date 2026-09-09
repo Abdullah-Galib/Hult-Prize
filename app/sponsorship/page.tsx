@@ -1,38 +1,36 @@
 import Link from 'next/link';
 import { sponsorshipPackages } from '../../data/sponsorship';
+import { constructMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = constructMetadata({
   title: 'Sponsorship',
   description: 'Partner with Hult Prize at Green University to drive social impact and youth innovation.',
-};
+});
 
 export default function SponsorshipPage() {
   return (
-    <div className="max-w-5xl mx-auto px-6 py-20">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Partner With Us</h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          Align your brand with the world's largest youth movement for social impact. 
+    <div className="mx-auto max-w-5xl px-6 py-20">
+      <div className="mb-16 text-center">
+        <h1 className="mb-6 text-4xl font-bold text-slate-900 dark:text-white md:text-5xl">Partner With Us</h1>
+        <p className="mx-auto max-w-3xl text-lg text-slate-600 dark:text-slate-300">
+          Align your brand with the world&apos;s largest youth movement for social impact.
           Gain unparalleled visibility among the brightest minds at Green University of Bangladesh.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 mb-16">
+      <div className="mb-16 grid gap-8 md:grid-cols-2">
         {sponsorshipPackages.map((pkg) => (
-          <div key={pkg.id} className="border border-gray-200 rounded-lg p-8 shadow-sm hover:shadow-md transition">
-            <h3 className="text-2xl font-bold text-[#E6007F] mb-2">{pkg.name}</h3>
-            <p className="text-xl font-semibold text-gray-900 mb-6">{pkg.amount}</p>
-            <ul className="space-y-3 mb-8">
+          <div key={pkg.id} className="rounded-lg border border-slate-200 p-8 shadow-sm transition hover:shadow-md dark:border-white/10">
+            <h3 className="mb-2 text-2xl font-bold text-brand-pink">{pkg.name}</h3>
+            <p className="mb-6 text-xl font-semibold text-slate-900 dark:text-white">{pkg.amount}</p>
+            <ul className="mb-8 space-y-3">
               {pkg.benefits.map((benefit, index) => (
-                <li key={index} className="flex items-center text-gray-600">
-                  <span className="text-[#FFDA00] mr-3">✔</span> {benefit}
+                <li key={index} className="flex items-center text-slate-600 dark:text-slate-300">
+                  <span className="mr-3 text-brand-yellow">✔</span> {benefit}
                 </li>
               ))}
             </ul>
-            <Link 
-              href="/sponsor" 
-              className="block text-center w-full bg-gray-900 text-white py-3 rounded font-medium hover:bg-[#E6007F] transition"
-            >
+            <Link href="/sponsor" className="block w-full rounded bg-navy py-3 text-center font-medium text-white transition hover:bg-brand-pink dark:bg-white dark:text-slate-900 dark:hover:bg-brand-pink dark:hover:text-white">
               Select Package
             </Link>
           </div>

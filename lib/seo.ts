@@ -1,5 +1,5 @@
-import { siteConfig } from '../config/site';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { siteConfig } from '@/config/site';
 
 type MetadataProps = {
   title?: string;
@@ -11,20 +11,28 @@ type MetadataProps = {
 export function constructMetadata({
   title,
   description = siteConfig.description,
-  image = '/social/default-og.jpg', // Ensure this image exists in public/social/
-  noIndex = false
+  image = '/social/default-og.jpg',
+  noIndex = false,
 }: MetadataProps = {}): Metadata {
+  const resolvedTitle = title
+    ? `${title} | ${siteConfig.shortName}`
+    : siteConfig.name;
+
   return {
-    title: title ? `${title} | ${siteConfig.shortName}` : siteConfig.name,
+    title: resolvedTitle,
     description,
     openGraph: {
-      title: title ? `${title} | ${siteConfig.shortName}` : siteConfig.name,
+      title: resolvedTitle,
       description,
+      url: siteConfig.url,
+      siteName: siteConfig.shortName,
       images: [{ url: image }],
+      locale: 'en_US',
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: title ? `${title} | ${siteConfig.shortName}` : siteConfig.name,
+      title: resolvedTitle,
       description,
       images: [image],
     },
@@ -32,6 +40,6 @@ export function constructMetadata({
       index: !noIndex,
       follow: !noIndex,
     },
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+    metadataBase: new URL(siteConfig.url),
   };
 }

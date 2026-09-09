@@ -1,47 +1,69 @@
 'use client';
+
 import { useState } from 'react';
 
+type Status = 'idle' | 'submitting' | 'success' | 'error';
+
 export default function SponsorForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => { setIsSubmitting(false); setSubmitted(true); }, 1500);
+    const form = e.currentTarget;
+    const payload = Object.fromEntries(new FormData(form).entries());
+
+    setStatus('submitting');
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/sponsor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Something went wrong. Please try again.');
+      }
+      setStatus('success');
+      form.reset();
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setStatus('error');
+    }
   };
 
-  if (submitted) {
+  if (status === 'success') {
     return (
-      <div className="bg-white/40 dark:bg-green-500/10 p-8 rounded-3xl border border-white/60 dark:border-green-500/30 text-center backdrop-blur-2xl shadow-2xl">
-        <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Proposal Received</h3>
+      <div className="rounded-3xl border border-slate-300 bg-white/40 p-8 text-center shadow-2xl backdrop-blur-2xl dark:border-green-500/30 dark:bg-green-500/10">
+        <h3 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">Proposal Received</h3>
         <p className="text-slate-700 dark:text-slate-300">Thank you for your interest. Our partnership team will contact you shortly.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/40 dark:bg-white/5 backdrop-blur-2xl p-8 rounded-3xl border border-white/60 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl border border-slate-200 bg-white/40 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-2xl dark:border-white/10 dark:bg-white/5">
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">Full Name *</label>
-          <input type="text" required className="w-full bg-white/70 dark:bg-black/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 border border-slate-300 dark:border-white/10 rounded-xl p-3.5 focus:ring-2 focus:ring-[#E6007F] focus:border-transparent outline-none transition-all" />
+          <label htmlFor="sponsorName" className="input-label">Full Name *</label>
+          <input type="text" id="sponsorName" name="name" required autoComplete="name" className="input-field" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">Work Email *</label>
-          <input type="email" required className="w-full bg-white/70 dark:bg-black/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 border border-slate-300 dark:border-white/10 rounded-xl p-3.5 focus:ring-2 focus:ring-[#E6007F] focus:border-transparent outline-none transition-all" />
+          <label htmlFor="sponsorEmail" className="input-label">Work Email *</label>
+          <input type="email" id="sponsorEmail" name="email" required autoComplete="email" className="input-field" />
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">Organization *</label>
-          <input type="text" required className="w-full bg-white/70 dark:bg-black/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 border border-slate-300 dark:border-white/10 rounded-xl p-3.5 focus:ring-2 focus:ring-[#E6007F] focus:border-transparent outline-none transition-all" />
+          <label htmlFor="sponsorOrganization" className="input-label">Organization *</label>
+          <input type="text" id="sponsorOrganization" name="organization" required autoComplete="organization" className="input-field" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">Partnership Type *</label>
-          {/* Dropdown with specific text color for options */}
-          <select required className="w-full bg-white/70 dark:bg-black/30 text-slate-900 dark:text-white border border-slate-300 dark:border-white/10 rounded-xl p-3.5 focus:ring-2 focus:ring-[#E6007F] focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
+          <label htmlFor="sponsorType" className="input-label">Partnership Type *</label>
+          <select id="sponsorType" name="partnershipType" required className="input-field cursor-pointer appearance-none">
             <option value="" className="text-slate-900">Select a category...</option>
             <option value="Title Sponsor" className="text-slate-900">Title Sponsor</option>
             <option value="Co-Sponsor" className="text-slate-900">Co-Sponsor</option>
@@ -51,12 +73,18 @@ export default function SponsorForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2">Message *</label>
-        <textarea required rows={4} className="w-full bg-white/70 dark:bg-black/30 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 border border-slate-300 dark:border-white/10 rounded-xl p-3.5 focus:ring-2 focus:ring-[#E6007F] focus:border-transparent outline-none transition-all"></textarea>
+        <label htmlFor="sponsorMessage" className="input-label">Message *</label>
+        <textarea id="sponsorMessage" name="message" required rows={4} className="input-field" />
       </div>
 
-      <button disabled={isSubmitting} type="submit" className="w-full bg-gradient-to-r from-[#E6007F] to-[#A30A7B] text-white py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_20px_rgba(230,0,127,0.5)] transition-all hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100">
-        {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
+      {status === 'error' && (
+        <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-300">
+          {errorMessage}
+        </p>
+      )}
+
+      <button disabled={status === 'submitting'} type="submit" className="w-full rounded-xl bg-gradient-to-r from-brand-pink to-brand-magenta py-4 text-lg font-bold transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(230,0,127,0.5)] disabled:opacity-70 disabled:hover:scale-100">
+        {status === 'submitting' ? 'Submitting...' : 'Submit Inquiry'}
       </button>
     </form>
   );

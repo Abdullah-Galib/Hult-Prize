@@ -1,32 +1,75 @@
 import { notFound } from 'next/navigation';
-import { eventsData } from '../../../data/events';
 import Link from 'next/link';
+import { eventsData } from '../../../data/events';
+import { constructMetadata } from '@/lib/seo';
+import { siteConfig } from '@/config/site';
 
-export default function EventDetailPage({ params }: { params: { slug: string } }) {
-  const event = eventsData.find(e => e.slug === params.slug);
-  
-  if (!event) return notFound();
+interface Props {
+  params: { slug: string };
+}
+
+export function generateStaticParams() {
+  return eventsData.map((event) => ({ slug: event.slug }));
+}
+
+export const dynamicParams = false;
+
+export function generateMetadata({ params }: Props) {
+  const event = eventsData.find((e) => e.slug === params.slug);
+  if (!event) return constructMetadata({ title: 'Event Not Found', noIndex: true });
+  return constructMetadata({
+    title: event.title,
+    description: event.description,
+    image: event.coverImage,
+  });
+}
+
+export default function EventDetailPage({ params }: Props) {
+  const event = eventsData.find((e) => e.slug === params.slug);
+  if (!event) notFound();
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.title,
+    description: event.description,
+    startDate: event.date,
+    eventStatus:
+      event.status === 'upcoming'
+        ? 'https://schema.org/EventScheduled'
+        : 'https://schema.org/EventScheduled',
+    location: {
+      '@type': 'Place',
+      name: event.location || 'Green University of Bangladesh',
+      address: siteConfig.address,
+    },
+    organizer: { '@type': 'Organization', name: siteConfig.name, url: siteConfig.url },
+  };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-20">
-      <Link href="/events" className="text-gray-500 hover:text-[#E6007F] text-sm mb-8 inline-block">
+    <div className="mx-auto max-w-4xl px-6 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Link href="/events" className="mb-8 inline-block text-sm text-slate-500 hover:text-brand-pink dark:text-slate-400">
         &larr; Back to Events
       </Link>
-      <div className="w-full h-64 bg-gray-200 rounded-lg mb-10 flex items-center justify-center text-gray-400">
+      <div className="mb-10 flex h-64 w-full items-center justify-center rounded-lg bg-slate-200 text-slate-400 dark:bg-slate-800">
         [Event Cover Image Placeholder]
       </div>
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">{event.title}</h1>
-      <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-8 pb-8 border-b border-gray-100">
-        <div className="flex items-center"><span className="font-bold mr-2">Date:</span> {event.date}</div>
-        <div className="flex items-center"><span className="font-bold mr-2">Location:</span> {event.location || 'TBA'}</div>
-        <div className="flex items-center">
-          <span className="font-bold mr-2">Status:</span> 
-          <span className={event.status === 'upcoming' ? 'text-[#E6007F] font-bold uppercase' : 'text-gray-500 uppercase'}>
-            {event.status}
+      <h1 className="mb-4 text-4xl font-bold text-slate-900 dark:text-white">{event.title}</h1>
+      <div className="mb-8 flex flex-wrap gap-4 border-b border-slate-100 pb-8 text-sm text-slate-600 dark:border-white/10 dark:text-slate-300">
+        <div><span className="mr-2 font-bold">Date:</span> {event.date}</div>
+        <div><span className="mr-2 font-bold">Location:</span> {event.location || 'TBA'}</div>
+        <div>
+          <span className="mr-2 font-bold">Status:</span>{' '}
+          <span className={event.status === 'upcoming' ? 'font-bold uppercase text-brand-pink' : 'uppercase text-slate-500'}>
+            {event.status === 'upcoming' ? 'Upcoming' : 'Archive'}
           </span>
         </div>
       </div>
-      <div className="prose prose-lg text-gray-600">
+      <div className="prose prose-lg prose-slate dark:prose-invert">
         <p>{event.description}</p>
         <h3>Event Highlights</h3>
         <p>[Future structured data including speakers, judges, and winners will be loaded here.]</p>

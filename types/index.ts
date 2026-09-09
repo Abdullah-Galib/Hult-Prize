@@ -60,16 +60,6 @@ export type ImpactMetric = {
   featured: boolean;
 };
 
-export type Testimonial = {
-  id: string;
-  quote: string;
-  name: string;
-  designation: string;
-  organization: string;
-  image: string;
-  approved: boolean;
-};
-
 export type NewsArticle = {
   id: string;
   title: string;

@@ -2,7 +2,6 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
@@ -15,12 +14,17 @@ const config: Config = {
           orange: '#FF9900',
           magenta: '#A30A7B',
         },
+        // Dark "navy" surfaces used across the site.
+        navy: '#0B1221',
+        'navy-light': '#131B2F',
+        'navy-dark': '#080D18',
+        'navy-deep': '#050810',
       },
       fontFamily: {
-        sans: ['var(--font-poppins)', 'sans-serif'],
+        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 };
 export default config;

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Event } from '../../types';
 
 interface EventCardProps {
@@ -6,38 +5,44 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event }: EventCardProps) {
-  // Extracting day and month for the badge (assuming format "DD MMM, YYYY")
-  const dateParts = event.date.split(' ');
-  const day = dateParts[0] || '01';
-  const month = dateParts[1]?.replace(',', '') || 'JAN';
+  // event.date is an ISO string (e.g. "2026-11-15").
+  const date = new Date(event.date);
+  const isValid = !Number.isNaN(date.getTime());
+  const day = isValid ? date.toLocaleDateString('en-GB', { day: '2-digit' }) : '--';
+  const month = isValid
+    ? date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
+    : 'TBA';
+  const fullDate = isValid
+    ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : event.date;
 
   return (
-    <div className="bg-white dark:bg-[#131B2F] rounded-2xl overflow-hidden shadow-lg border border-slate-100 dark:border-white/10 group flex flex-col h-full transition-all hover:-translate-y-1 hover:shadow-2xl">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl dark:border-white/10 dark:bg-navy-light">
       {/* Thumbnail with Date Badge */}
-      <div className="relative h-48 bg-slate-200 dark:bg-slate-800 w-full overflow-hidden">
+      <div className="relative h-48 w-full overflow-hidden bg-slate-200 dark:bg-slate-800">
         {/* Placeholder for actual image */}
-        <div className="absolute inset-0 flex items-center justify-center text-slate-400 group-hover:scale-105 transition-transform duration-500">
+        <div className="absolute inset-0 flex items-center justify-center text-slate-400 transition-transform duration-500 group-hover:scale-105">
           [Image: {event.title}]
         </div>
         {/* Date Badge */}
-        <div className="absolute bottom-0 left-4 translate-y-1/2 bg-[#E6007F] text-white flex flex-col items-center justify-center w-12 h-14 rounded-lg shadow-md z-10">
+        <div className="absolute bottom-0 left-4 z-10 flex h-14 w-12 translate-y-1/2 flex-col items-center justify-center rounded-lg bg-brand-pink text-white shadow-md">
           <span className="text-xl font-black leading-none">{day}</span>
           <span className="text-[10px] font-bold uppercase tracking-wider">{month}</span>
         </div>
       </div>
 
-      <div className="p-6 pt-10 flex-grow flex flex-col">
-        <span className="text-[10px] font-bold text-[#A30A7B] dark:text-[#FFDA00] uppercase tracking-wider mb-2">
+      <div className="flex-grow flex flex-col p-6 pt-10">
+        <span className="mb-2 text-[10px] font-bold uppercase tracking-wider text-brand-magenta dark:text-brand-yellow">
           {event.status === 'upcoming' ? 'Upcoming' : 'Archive'}
         </span>
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-2">{event.title}</h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 flex-grow line-clamp-2">{event.description}</p>
-        
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-auto pt-4 border-t border-slate-100 dark:border-white/10">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <span>10:00 AM • GUB Campus</span>
+        <h3 className="mb-3 line-clamp-2 text-xl font-bold text-slate-900 dark:text-white">{event.title}</h3>
+        <p className="mb-4 line-clamp-2 flex-grow text-sm text-slate-600 dark:text-slate-400">{event.description}</p>
+
+        <div className="mt-auto flex items-center gap-2 border-t border-slate-100 pt-4 text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span>{fullDate} • {event.location || 'GUB Campus'}</span>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

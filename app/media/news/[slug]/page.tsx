@@ -1,42 +1,69 @@
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { newsData } from '@/data/news';
+import { constructMetadata } from '@/lib/seo';
+import { siteConfig } from '@/config/site';
 
-export const metadata = {
-  title: 'News & Press',
-  description: 'Latest news, press releases, and articles about Hult Prize at Green University.',
-};
+interface Props {
+  params: { slug: string };
+}
 
-export default function NewsPage() {
-  // Placeholder data for the initial static setup
-  const articles = [
-    {
-      id: '1',
-      title: 'Hult Prize at GUB Secures Title Sponsor for 2026',
-      slug: 'gub-secures-title-sponsor-2026',
-      excerpt: 'In a landmark partnership, Hult Prize at Green University announces its primary backer for the upcoming pitch cycle.',
-      publishedAt: '2026-09-10',
-    }
-  ];
+export function generateStaticParams() {
+  return newsData.map((article) => ({ slug: article.slug }));
+}
+
+// Unknown slugs 404 at build time instead of rendering on demand.
+export const dynamicParams = false;
+
+export function generateMetadata({ params }: Props) {
+  const article = newsData.find((a) => a.slug === params.slug);
+  if (!article) return constructMetadata({ title: 'Article Not Found', noIndex: true });
+  return constructMetadata({
+    title: article.title,
+    description: article.excerpt,
+    image: article.coverImage,
+  });
+}
+
+export default function NewsArticlePage({ params }: Props) {
+  const article = newsData.find((a) => a.slug === params.slug);
+  if (!article) notFound();
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    description: article.excerpt,
+    datePublished: article.publishedAt,
+    author: { '@type': 'Organization', name: siteConfig.name },
+    publisher: { '@type': 'Organization', name: siteConfig.name },
+  };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-20">
-      <h1 className="text-4xl font-bold text-gray-900 mb-12">News & Press</h1>
-      
-      <div className="space-y-8">
-        {articles.map((article) => (
-          <article key={article.id} className="border-b border-gray-100 pb-8 last:border-0">
-            <span className="text-xs text-gray-500 font-medium mb-2 block">{article.publishedAt}</span>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              <Link href={`/media/news/${article.slug}`} className="hover:text-[#E6007F] transition">
-                {article.title}
-              </Link>
-            </h2>
-            <p className="text-gray-600 mb-4">{article.excerpt}</p>
-            <Link href={`/media/news/${article.slug}`} className="text-[#E6007F] font-semibold text-sm hover:underline">
-              Read Article &rarr;
-            </Link>
-          </article>
-        ))}
-      </div>
+    <div className="mx-auto max-w-3xl px-6 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Link href="/media/news" className="mb-8 inline-block text-sm text-slate-500 hover:text-brand-pink dark:text-slate-400">
+        &larr; Back to News
+      </Link>
+      <article>
+        <time dateTime={article.publishedAt} className="mb-2 block text-sm font-medium text-slate-500 dark:text-slate-400">
+          {new Date(article.publishedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}{' '}
+          • {article.author}
+        </time>
+        <h1 className="mb-8 text-4xl font-bold text-slate-900 dark:text-white">{article.title}</h1>
+        <div className="prose prose-lg prose-slate dark:prose-invert">
+          {article.content.split('\n\n').map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
+          ))}
+        </div>
+      </article>
     </div>
   );
 }
