@@ -1,5 +1,12 @@
 # Code Review — Hult Prize GUB Website
 
+> **STATUS: FIXED.** All items below were implemented on this branch and verified
+> with `next lint` (0 errors), `tsc --noEmit` (clean), a production build (all
+> `[slug]` routes now SSG), and runtime smoke tests (route status codes, form API
+> validation, security headers, sitemap/robots, font serving, date badge output).
+> The only remaining launch TODOs are the external integrations listed in
+> `README.md` → "Before you launch" (form delivery channel, env var, real content).
+
 Next.js 14 (App Router) + Tailwind CSS, ~1,400 lines across 19 routes.
 TypeScript compiles clean, production build succeeds. The issues below are verified
 against the code (not speculation). Ordered by severity.

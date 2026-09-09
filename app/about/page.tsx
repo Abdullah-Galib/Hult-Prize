@@ -47,7 +47,17 @@ export default function AboutPage() {
           </div>
 
         </div>
-        
+
+        {/* Subpages */}
+        <div className="flex flex-wrap gap-6 pt-2 text-sm font-semibold">
+          <a href="/about/mission" className="text-brand-pink hover:underline">
+            Read our full Mission &amp; Vision &rarr;
+          </a>
+          <a href="/about/advisor" className="text-brand-pink hover:underline">
+            A message from our Advisor &rarr;
+          </a>
+        </div>
+
       </div>
     </div>
   );

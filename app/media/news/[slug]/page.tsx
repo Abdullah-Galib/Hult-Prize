@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { newsData } from '@/data/news';
 import { constructMetadata } from '@/lib/seo';
 import { siteConfig } from '@/config/site';
+import { formatDate } from '@/lib/dates';
 
 interface Props {
   params: { slug: string };
@@ -50,11 +51,7 @@ export default function NewsArticlePage({ params }: Props) {
       </Link>
       <article>
         <time dateTime={article.publishedAt} className="mb-2 block text-sm font-medium text-slate-500 dark:text-slate-400">
-          {new Date(article.publishedAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}{' '}
+          {formatDate(article.publishedAt, { year: 'numeric', month: 'long', day: 'numeric' })}{' '}
           • {article.author}
         </time>
         <h1 className="mb-8 text-4xl font-bold text-slate-900 dark:text-white">{article.title}</h1>

@@ -3,6 +3,7 @@ import { siteConfig } from '@/config/site';
 import { eventsData } from '@/data/events';
 import { achievementsData } from '@/data/achievements';
 import { newsData } from '@/data/news';
+import { parseDate } from '@/lib/dates';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
@@ -32,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const dynamicRoutes = [
     ...eventsData.map((event) => ({
       url: `${siteConfig.url}/events/${event.slug}`,
-      lastModified: new Date(event.date),
+      lastModified: parseDate(event.date),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     })),
@@ -44,7 +45,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...newsData.map((article) => ({
       url: `${siteConfig.url}/media/news/${article.slug}`,
-      lastModified: new Date(article.publishedAt),
+      lastModified: parseDate(article.publishedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     })),

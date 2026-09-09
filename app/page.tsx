@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { eventsData } from '@/data/events';
 import EventCard from '@/components/events/EventCard';
 
@@ -33,7 +34,14 @@ export default function HomePage() {
       <section className="relative flex min-h-[85vh] w-full items-center pb-16 pt-24">
         {/* Background Overlay */}
         <div className="absolute inset-0 -z-20 bg-navy dark:bg-navy-deep"></div>
-        <div className="absolute inset-0 -z-10 bg-[url('/images/branding/hero-bg.jpg')] bg-cover bg-center opacity-30 mix-blend-luminosity"></div>
+        <Image
+          src="/images/branding/hero-bg.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="-z-10 object-cover opacity-30 mix-blend-luminosity"
+        />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-navy via-navy/90 to-transparent"></div>
 
         <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-6 xl:grid-cols-12">
@@ -62,13 +70,14 @@ export default function HomePage() {
           <div className="rounded-3xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-2xl dark:bg-white/5 xl:col-span-5">
             <h3 className="mb-6 text-xl font-bold text-white">What are you looking for?</h3>
 
-            <div className="relative mb-6">
-              <label htmlFor="homeSearch" className="sr-only">Search</label>
+            {/* Real search: submits to /events, which filters by the query. */}
+            <form action="/events" method="get" className="relative mb-6" role="search">
+              <label htmlFor="homeSearch" className="sr-only">Search events</label>
               <input type="text" id="homeSearch" name="q" placeholder="Search events, resources..." className="w-full rounded-full bg-white py-3 pl-5 pr-12 text-slate-900 outline-none placeholder:text-slate-500 focus:ring-2 focus:ring-brand-pink" />
-              <button type="button" aria-label="Search" className="absolute bottom-1.5 right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-brand-pink text-white transition-colors hover:bg-brand-magenta">
+              <button type="submit" aria-label="Search" className="absolute bottom-1.5 right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-brand-pink text-white transition-colors hover:bg-brand-magenta">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </button>
-            </div>
+            </form>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {quickLinks.map((item) => (

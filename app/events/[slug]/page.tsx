@@ -34,10 +34,7 @@ export default function EventDetailPage({ params }: Props) {
     name: event.title,
     description: event.description,
     startDate: event.date,
-    eventStatus:
-      event.status === 'upcoming'
-        ? 'https://schema.org/EventScheduled'
-        : 'https://schema.org/EventScheduled',
+    eventStatus: 'https://schema.org/EventScheduled',
     location: {
       '@type': 'Place',
       name: event.location || 'Green University of Bangladesh',

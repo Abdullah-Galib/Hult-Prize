@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { newsData } from '@/data/news';
 import { constructMetadata } from '@/lib/seo';
+import { formatDate } from '@/lib/dates';
 
 export const metadata = constructMetadata({
   title: 'News & Press',
@@ -17,11 +18,7 @@ export default function NewsPage() {
           <article key={article.id} className="border-b border-slate-100 pb-8 last:border-0 dark:border-white/10">
             <span className="mb-2 block text-xs font-medium text-slate-500 dark:text-slate-400">
               <time dateTime={article.publishedAt}>
-                {new Date(article.publishedAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {formatDate(article.publishedAt, { year: 'numeric', month: 'long', day: 'numeric' })}
               </time>
             </span>
             <h2 className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">

@@ -1,12 +1,13 @@
 import { Event } from '../../types';
+import { parseDate } from '../../lib/dates';
 
 interface EventCardProps {
   event: Event;
 }
 
 export default function EventCard({ event }: EventCardProps) {
-  // event.date is an ISO string (e.g. "2026-11-15").
-  const date = new Date(event.date);
+  // event.date is a date-only ISO string (e.g. "2026-11-15").
+  const date = parseDate(event.date);
   const isValid = !Number.isNaN(date.getTime());
   const day = isValid ? date.toLocaleDateString('en-GB', { day: '2-digit' }) : '--';
   const month = isValid
