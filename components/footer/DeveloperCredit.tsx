@@ -14,7 +14,6 @@ export default function DeveloperCredit() {
   const [profile, setProfile] = useState<GithubUser | null>(null);
 
   useEffect(() => {
-    // Fetches Abdullah Md Galib's data
     fetch('https://api.github.com/users/Abdullah-Galib')
       .then((res) => res.json())
       .then((data) => {
@@ -26,24 +25,32 @@ export default function DeveloperCredit() {
   if (!profile) return null;
 
   return (
-    <div className="border-t border-white/5 bg-[#050810] py-6">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-slate-600">
-          © {new Date().getFullYear()} Hult Prize at Green University of Bangladesh. All rights reserved.
+    <div className="border-t border-white/5 bg-[#04060C] py-4">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        
+        <p className="text-[11px] text-slate-500 font-medium">
+          © {new Date().getFullYear()} Hult Prize at GUB. All rights reserved.
         </p>
         
-        <div className="flex items-center gap-4 bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:bg-white/10 transition-colors">
-          <a href={profile.html_url} target="_blank" rel="noopener noreferrer" className="relative w-8 h-8 rounded-full overflow-hidden border border-[#E6007F]">
-            <Image src={profile.avatar_url} alt={profile.name || profile.login} fill sizes="32px" className="object-cover" />
-          </a>
-          <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Developed By</span>
-            <a href={profile.html_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-white hover:text-[#E6007F] transition-colors">
+        <a 
+          href={profile.html_url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="flex items-center gap-2.5 group opacity-80 hover:opacity-100 transition-opacity"
+        >
+          <span className="text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-[#E6007F] transition-colors">
+            Developed By
+          </span>
+          <div className="flex items-center gap-2">
+            <div className="relative w-5 h-5 rounded-full overflow-hidden border border-[#E6007F]/30 group-hover:border-[#E6007F] transition-colors shadow-sm">
+              <Image src={profile.avatar_url} alt={profile.name || profile.login} fill sizes="20px" className="object-cover" />
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 group-hover:text-white transition-colors">
               {profile.name || profile.login}
-            </a>
-            <span className="text-[10px] text-[#FFDA00]">GUB Sponsorship Management Team</span>
+            </span>
           </div>
-        </div>
+        </a>
+        
       </div>
     </div>
   );
